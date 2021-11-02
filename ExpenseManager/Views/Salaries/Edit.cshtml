@@ -1,0 +1,37 @@
+﻿@model ExpenseManager.Models.Salary
+
+@{
+    ViewData["Title"] = "Update Salary";
+}
+
+&nbsp;
+<div class="formCreate">
+    <h6>Update Salary</h6>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit" class="form border rounded">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="SalaryId" />
+                <div class="form-group">
+                    <label asp-for="MonthId" class="control-label">Month</label>
+                    <select asp-for="MonthId" class="form-control" asp-items="ViewBag.MonthId"></select>
+                    <span asp-validation-for="MonthId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Value" class="control-label"></label>
+                    <input asp-for="Value" class="form-control" />
+                    <span asp-validation-for="Value" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-outline-success btn-sm" /> &nbsp;
+                    <a asp-action="Index" class="btn btn-outline-dark btn-sm">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

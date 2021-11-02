@@ -1,0 +1,105 @@
+﻿@model IEnumerable<ExpenseManager.Models.Salary>
+
+@{
+    ViewData["Title"] = "Registered Salaries";
+}
+&nbsp;
+
+<div class="table">
+    <div class="container">
+        <h6>Registered Salaries</h6>
+
+        <p class="btnNew">
+            <a asp-action="Create" class="btn btn-outline-primary btn-sm">New salary</a>
+        </p>
+
+        @if (TempData["Confirmation"] != null)
+        {
+            <h6 class="alert alert-success">
+                @TempData["Confirmation"]
+            </h6>
+        }
+
+        <form asp-action="Index" asp-controller="Salaries" method="post">
+            <div class="form-group">
+                <div class="input-group col-md-6">
+                    <input class="form-control" name="txtSearch" />
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-dark"><i class="fas fa-search-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Month)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Value)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Month.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.SalaryId" class="btn btn-outline-info btn-sm">Update</a> |
+                            <a onclick="ShowModal(@item.SalaryId)" class="btn btn-outline-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to proceed with the exclusion of the salary ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary btnDelete">Yes</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function ShowModal(id) {
+            $(".modal").modal();
+            $(".btnDelete").on('click', function () {
+                $.ajax({
+                    url: "Salaries/Delete",
+                    method: "POST",
+                    data: { id: id },
+                    success: function (data) {
+                        $(".modal").modal('hide');
+                        location.reload(true);
+                    }
+                });
+            });
+        }
+    </script>
+}

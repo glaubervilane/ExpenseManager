@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace ExpenseManager.Models
 
         [Required(ErrorMessage = "Mandatory Field.")]
         [StringLength(50, ErrorMessage = "Use Less Characters.")]
+        [Remote("ExpenseTypeExist", "ExpenseTypes")]
         public string Name { get; set; }
 
         public ICollection<Expense> Expense { get; set; }
