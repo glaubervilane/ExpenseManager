@@ -42,6 +42,24 @@ namespace ExpenseManager.Controllers
             return Json(true);
         }
 
+        public JsonResult AddExpenseType(string txtExpense)
+        {
+            if (!String.IsNullOrEmpty(txtExpense))
+            {
+                if (!_context.ExpenseTypes.Any(td => td.Name.ToUpper() == txtExpense.ToUpper()))
+                {
+                    ExpenseType expenseType = new ExpenseType();
+                    expenseType.Name = txtExpense;
+                    _context.Add(expenseType);
+                    _context.SaveChanges();
+
+                    return Json(true);
+                }
+            }
+
+            return Json(false);
+        }
+
         // GET: ExpenseTypes/Create
         public IActionResult Create()
         {

@@ -1,0 +1,94 @@
+﻿@model ExpenseManager.Models.Expense
+
+@{
+    ViewData["Title"] = "New Expense";
+}
+
+
+<div class="formCreate">
+    <h6>New Expense</h6>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create" class="form rounded border">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="MonthId" class="control-label">Month</label>
+                    <select asp-for="MonthId" class="form-control" asp-items="ViewBag.MonthId"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ExpenseTypeId" class="control-label">Expense Type</label>
+                    <div class="input-group">
+                        <select asp-for="ExpenseTypeId" class="form-control" asp-items="ViewBag.ExpenseTypeId"></select>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-info" data-toggle="tooltip" data-placement="right" title="Add New Expense Type" onclick="ShowModal()">
+                                <i class="far fa-plus-square"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label asp-for="Value" class="control-label"></label>
+                    <input asp-for="Value" class="form-control" />
+                    <span asp-validation-for="Value" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-outline-success btn-sm" /> &nbsp;
+                    <a asp-action="Index" class="btn btn-outline-dark btn-sm">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input class="form-control txtExpense" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary btnAdd">Add</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        function ShowModal() {
+            $(".modal").modal();
+            $(".btnAdd").on('click', function () {
+                var txtExpense = $(".txtExpense").val();
+                $.ajax({
+                    url: "/ExpenseTypes/AddExpenseType",
+                    method: "POST",
+                    data: { txtExpense: txtExpense },
+                    success: function (data) {
+                        if (!data) {
+                            $(".modal").modal('hide');
+                            $(".modal").modal('dispose');
+                            $(".btnAdd").unbind('click');
+                            $(".txtExpense").val('');
+                            alert("Type of expense already registered.");
+                        }
+                        else location.reload(true);
+                    }
+                })
+            });
+        }
+    </script>
+}

@@ -1,0 +1,142 @@
+﻿@model X.PagedList.IPagedList<ExpenseManager.Models.Expense>
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+
+@{
+    ViewData["Title"] = "Registered Expenses";
+}
+<br />
+<div class="table">
+    <div class="container">
+        <p class="btnNew">
+            <a asp-action="Create" class="btn btn-outline-primary btn-sm">New Expense</a>
+        </p>
+
+        @if (TempData["Confirmation"] != null)
+        {
+            <h6 class="alert alert-success">@TempData["Confirmation"]</h6>
+        }
+
+
+        <div class="row justify-content-md-center">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><strong>Month</strong></label>
+                <div class="col-sm-9">
+                    <select class="form-control chooseMonth" asp-items="ViewBag.Months"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <partial name="_TotalSpendingMonth" />
+            </div>
+
+            <div class="col">
+                <partial name="_ExpenseMonth" />
+            </div>
+        </div>
+
+        <div class="row">
+            <partial name="_TotalExpenses" />
+        </div>
+
+        <div class="statistics">
+            <div class="alert alert-primary">
+                @await Component.InvokeAsync("Statistics")
+            </div>
+        </div>
+
+        <div class="mainTable">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Months
+                        </th>
+                        <th>
+                            Expense Type
+                        </th>
+                        <th>
+                            Value
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Month.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ExpenseType.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Value)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ExpenseId" class="btn btn-outline-info btn-sm">Update</a> |
+                                <a onclick="ShowModal(@item.ExpenseId)" class="btn btn-outline-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@Html.PagedListPager(Model, page => Url.Action("Index", "Expenses", new { page }), new PagedListRenderOptionsBase
+{
+    LiElementClasses = new string[] { "page-item" },
+    PageClasses = new string[] { "page-link" }
+})
+
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Excluir</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to proceed with the exclusion of this expense ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary btnDelete">Yes</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/bundle.min.js"></script>
+    <script>
+        LoadSpendingDataMonths();
+        LoadDataTotalExpenditureMonths();
+        LoadDataTotalExpenses();
+
+        function ShowModal(id) {
+            $(".modal").modal();
+            $(".btnDelete").on('click', function () {
+                $.ajax({
+                    url: "Expenses/Delete",
+                    method: "POST",
+                    data: { id: id },
+                    success: function (data) {
+                        $(".modal").modal('hide');
+                        location.reload(true);
+                    }
+                });
+            });
+        }
+    </script>
+
+}
